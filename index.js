@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
 
@@ -28,10 +28,27 @@ async function run() {
 
     const database = client.db("car-clinic");
     const servicesCollection = database.collection("servicesCollection");
+    const bookingCollection = database.collection("bookingCollection");
 
     app.get("/services", async (req, res) => {
       const data = servicesCollection.find();
       const result = await data.toArray();
+      res.send(result);
+    });
+
+    // get single services by id
+    app.get("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await servicesCollection.findOne(query);
+      console.log(result);
+      res.send(result);
+    });
+    // get order a services by id
+    app.post("/bookings", async (req, res) => {
+      const doc = req.body;
+      const result = await bookingCollection.insertOne(doc);
+      console.log(result);
       res.send(result);
     });
 
