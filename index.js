@@ -41,14 +41,27 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await servicesCollection.findOne(query);
-      console.log(result);
       res.send(result);
     });
     // get order a services by id
     app.post("/bookings", async (req, res) => {
       const doc = req.body;
       const result = await bookingCollection.insertOne(doc);
-      console.log(result);
+      res.send(result);
+    });
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      let query = {};
+      if (email) {
+        query = { email: email };
+      }
+      const result = await bookingCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.delete("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      let filter = { _id: new ObjectId(id) };
+      const result = await bookingCollection.deleteOne(filter);
       res.send(result);
     });
 
